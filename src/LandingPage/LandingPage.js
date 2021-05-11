@@ -1,18 +1,17 @@
 import {
   createMuiTheme,
-  Grid,
   Typography,
-  Slide,
-  Box,
-  Icon,
+  makeStyles,
+  ThemeProvider,
+  CssBaseline,
+  responsiveFontSizes,
+  Grid,
 } from "@material-ui/core";
-import React, { useState } from "react";
-import classNames from "classnames";
-import santiIcon from "../resources/Santi-Icon-02.svg";
-import PageBase from "../PageBase/PageBase";
-import useStyles from "../style/myStyles";
+import React from "react";
+import FancyScroller from "../FancyScroller";
+import NavBar from "./NavBar";
 
-const theme = createMuiTheme({
+let theme = createMuiTheme({
   palette: {
     primary: {
       dark: "#333333",
@@ -28,204 +27,119 @@ const theme = createMuiTheme({
     },
   },
 });
+theme = responsiveFontSizes(theme);
 
-//TODO: Put a carousel
-//TODO: Put vectors at each slide of the carousel
-//TODO: Animate the vectors
+const scrollerContents = [
+  "Let's start here...",
+  "I'm Santiago Cabo.",
+  "I'm a Software Engineer.",
+  "I wanted to show off this component.",
+  "It involves a lot of CSS manipulation.",
+  "It's responsive. Try it on mobile!",
+  "And of course, it uses React.",
+  "Thank you for checking it out!",
+  "The End.",
+];
 
-function LandingPage() {
-  const classes = useStyles(theme);
-  const [hovering, setHovering] = useState(false);
+const useStyle = makeStyles((theme) => ({
+  landingPageMainContainer: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+    height: "100vh",
+    backgroundColor: "#333333",
+    alignSelf: "flex-start",
+  },
+  posRelative: {
+    position: "relative",
+  },
+  leftBracket: {
+    height: "100%",
+    width: "30%",
+    borderRadius: "2vh",
+    [theme.breakpoints.up("lg")]: { border: "1vw solid #F4B780" },
+  },
+  leftOpacity: {
+    width: "15%",
+    height: "100%",
+    position: "absolute",
+    backgroundColor: "#333333",
+  },
+}));
+
+function LandingPage(props) {
+  const classes = useStyle(props);
+
+  const createScrollerText = ({
+    contents = "",
+    isStart = false,
+    scrollBoxHeigth = 1000,
+    color = "textPrimary",
+    variant = "h3",
+    key,
+  }) => {
+    return (
+      <div
+        key={key}
+        style={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "center",
+          justifyItems: "center",
+        }}
+      >
+        <Typography
+          align="center"
+          variant={variant}
+          color={key % 2 === 0 ? "textPrimary" : "secondary"}
+          className={classes.typographyH2}
+        >
+          {contents}
+        </Typography>
+      </div>
+    );
+  };
+
   return (
-    <PageBase showPhoto={true} showSocialMedia={true}>
-      <Grid container item className={classes.menuBox} justify="center">
-        <Slide
-          direction="down"
-          in={true}
-          timeout={theme.transitions.duration.complex}
-          mountOnEnter
-        >
-          <Grid
-            item
-            container
-            className={classes.menuContainer}
-            justify="center"
-            alignContent="flex-end"
-          >
-            <Box className={classes.menuItemsBox}>
-              <Grid
-                container
-                xs={12}
-                justify="space-between"
-                alignContent="center"
-              >
-                <Grid item>
-                  <Typography
-                    variant="body"
-                    color="textPrimary"
-                    className={classes.bodyFont}
-                  >
-                    Home
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body"
-                    color="textPrimary"
-                    className={classes.bodyFont}
-                  >
-                    Portfolio
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body"
-                    color="textPrimary"
-                    className={classes.bodyFont}
-                  >
-                    Blog
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography
-                    variant="body"
-                    color="textPrimary"
-                    className={classes.bodyFont}
-                  >
-                    Contact
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
+    <ThemeProvider theme={theme}>
+      <CssBaseline>
+        <div className={classes.landingPageMainContainer}>
+          <NavBar />
+          <Grid container>
+            <Grid
+              item
+              container
+              justify="flex-end"
+              xs={0}
+              lg={3}
+              className={classes.posRelative}
+            >
+              <div className={classes.leftBracket}></div>
+              <div className={classes.leftOpacity}></div>
+            </Grid>
+            <Grid item container justify="center" xs={12} lg={6}>
+              <FancyScroller threshold={0.25} height={800} width={1000}>
+                {scrollerContents.map((c, i) =>
+                  createScrollerText({ contents: c, isStart: i === 0, key: i })
+                )}
+              </FancyScroller>
+            </Grid>
+            <Grid
+              item
+              container
+              justify="flex-start"
+              xs={0}
+              lg={3}
+              className={classes.posRelative}
+            >
+              <div className={classes.leftBracket}></div>
+              <div className={classes.leftOpacity}></div>
+            </Grid>
           </Grid>
-        </Slide>
-      </Grid>
-      <Grid item container direction="row" className={classes.middleContentBox}>
-        <Grid
-          item
-          xs={12}
-          lg={hovering ? 3 : 6}
-          container
-          className={
-            hovering
-              ? classNames(
-                  classes.upperLeft,
-                  classes.onFront,
-                  classes.contractedSecondary,
-                  classes.transitionable
-                )
-              : classNames(
-                  classes.upperLeft,
-                  classes.onFront,
-                  classes.extendedSecondary,
-                  classes.transitionable
-                )
-          }
-          alignItems="center"
-        >
-          <Grid container item xs={12} direction="column" alignItems="flex-end">
-            <div style={{ display: "flex" }}>
-              <Icon
-                className={
-                  hovering ? classes.santiIconHidden : classes.santiIcon
-                }
-                style={{
-                  transition: theme.transitions.create("all", {
-                    easing: theme.transitions.easing.easeInOut,
-                    duration: theme.transitions.duration.complex,
-                  }),
-                }}
-              >
-                <img src={santiIcon} alt="santiIcon" />
-              </Icon>
-              <div
-                className={
-                  hovering
-                    ? classNames(classes.spacer, classes.transitionable)
-                    : classNames(classes.spacer, classes.transitionable)
-                }
-              ></div>
-              <div className={classes.nameAndTitleBox}>
-                <Typography
-                  variant="h3"
-                  color="textPrimary"
-                  className={classNames(classes.onFront, classes.nameFont)}
-                >
-                  Santiago Cabo
-                </Typography>
-                <Typography
-                  variant="h4"
-                  color="textSecondary"
-                  className={classNames(classes.onFront, classes.subTitleFont)}
-                >
-                  Software Engineer
-                </Typography>
-              </div>
-            </div>
-          </Grid>
-        </Grid>
-        <Grid
-          item
-          xs={0}
-          lg={hovering ? 9 : 6}
-          className={classes.transitionable}
-        ></Grid>
-        <Grid
-          item
-          xs={0}
-          lg={hovering ? 3 : 6}
-          className={classes.transitionable}
-        ></Grid>
-        <Grid
-          item
-          xs={12}
-          lg={hovering ? 9 : 6}
-          container
-          direction="column"
-          className={
-            hovering
-              ? classNames(
-                  classes.lowerRight,
-                  classes.onFront,
-                  classes.extendedPrimary,
-                  classes.transitionable
-                )
-              : classNames(
-                  classes.lowerRight,
-                  classes.onFront,
-                  classes.contractedPrimary,
-                  classes.transitionable
-                )
-          }
-          alignItems="flex-start"
-          justify="center"
-          onMouseEnter={(event) => setHovering(true)}
-          onMouseLeave={(event) => setHovering(false)}
-        >
-          <Typography
-            variant="body"
-            color="textPrimary"
-            className={classNames(classes.onFront, classes.bodyFont)}
-          >
-            Implementing service oriented solutions for 5+ years.
-          </Typography>
-          <Typography
-            variant="body"
-            color="textPrimary"
-            className={classNames(classes.onFront, classes.bodyFont)}
-          >
-            Ever-changing business concerns.
-          </Typography>
-          <Typography
-            variant="body"
-            color="textPrimary"
-            className={classNames(classes.onFront, classes.bodyFont)}
-          >
-            Valuing autonomy and the courage to try something new.
-          </Typography>
-        </Grid>
-      </Grid>
-    </PageBase>
+        </div>
+      </CssBaseline>
+    </ThemeProvider>
   );
 }
 

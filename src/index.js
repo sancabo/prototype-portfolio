@@ -1,10 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import LoadableLandingPage from "./LandingPage/LoadableLandingPage";
+import LandingPage from "./LandingPage/LandingPage";
 
 ReactDOM.render(
   <React.StrictMode>
-    <LoadableLandingPage />
+    <LandingPage />
   </React.StrictMode>,
   document.getElementById("root")
 );
